@@ -100,9 +100,6 @@ importers:
       '@volley/vgf':
         specifier: ^4.10.0
         version: 4.12.0(eslint@10.1.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(storybook@9.1.20(@testing-library/dom@10.4.1)(vite@6.4.1(@types/node@22.19.15)(tsx@4.21.0)))(typescript@5.9.3)
-      dotenv:
-        specifier: ^16.4.0
-        version: 16.6.1
       express:
         specifier: ^4.21.2
         version: 4.22.1
@@ -128,12 +125,6 @@ importers:
 
   packages/shared:
     devDependencies:
-      '@types/react':
-        specifier: ^19.0.0
-        version: 19.2.14
-      react:
-        specifier: ^19.0.0
-        version: 19.2.4
       typescript:
         specifier: ^5.7.0
         version: 5.9.3
@@ -1206,10 +1197,6 @@ packages:
 
   dom-accessibility-api@0.6.3:
     resolution: {integrity: sha512-7ZgogeTnjuHbo+ct10G9Ffp0mif17idi0IyWNVA/wcwcm7NPOD/WEHVP3n7n3MhXqxoIYm8d6MuZohYWIZ4T3w==}
-
-  dotenv@16.6.1:
-    resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
-    engines: {node: '>=12'}
 
   dset@3.1.4:
     resolution: {integrity: sha512-2QF/g9/zTaPDc3BjNcVTGoBbXBgYfMTTceLaYcFJ/W9kggFUkhxD/hMEeuLKbugyef9SqAx8cpgwlIP/jinUTA==}
@@ -3161,8 +3148,6 @@ snapshots:
   dom-accessibility-api@0.5.16: {}
 
   dom-accessibility-api@0.6.3: {}
-
-  dotenv@16.6.1: {}
 
   dset@3.1.4: {}
 

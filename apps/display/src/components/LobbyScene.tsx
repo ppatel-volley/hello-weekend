@@ -7,7 +7,8 @@ interface LobbySceneProps {
 export function LobbyScene({ state }: LobbySceneProps) {
     const params = new URLSearchParams(window.location.search)
     const sessionId = params.get("sessionId") ?? ""
-    const controllerUrl = `${window.location.origin}?sessionId=${sessionId}`
+    const controllerPort = import.meta.env.DEV ? "5174" : window.location.port
+    const controllerUrl = `${window.location.protocol}//${window.location.hostname}:${controllerPort}?sessionId=${sessionId}`
 
     return (
         <div style={{
@@ -49,15 +50,21 @@ export function LobbyScene({ state }: LobbySceneProps) {
                 <p style={{ margin: "0 0 0.5rem 0", fontSize: "1rem", color: "#888" }}>
                     Connect your controller at:
                 </p>
-                <p style={{
-                    margin: 0,
-                    fontSize: "1.2rem",
-                    color: "#667eea",
-                    fontFamily: "monospace",
-                    wordBreak: "break-all",
-                }}>
+                <a
+                    href={controllerUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        display: "block",
+                        margin: 0,
+                        fontSize: "1.2rem",
+                        color: "#667eea",
+                        fontFamily: "monospace",
+                        wordBreak: "break-all",
+                    }}
+                >
                     {controllerUrl}
-                </p>
+                </a>
             </div>
         </div>
     )

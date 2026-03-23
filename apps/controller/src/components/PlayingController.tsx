@@ -16,14 +16,18 @@ import { useState, useRef, useEffect, useCallback } from "react"
 import { GAME_CONSTANTS } from "@hello-weekend/shared"
 import { useStateSync, useDispatchThunk } from "../hooks/useVGFState"
 
-// Try to load Recognition Service SDK synchronously — may not be available
+// Dynamic import — resolved once, cached for subsequent renders
 let recognitionSdk: any = null
-try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    recognitionSdk = require("@volley/recognition-client-sdk")
-} catch {
-    console.warn("[PlayingController] Recognition Service SDK not available — using text input fallback")
-}
+let recognitionSdkLoaded = false
+const recognitionSdkPromise = import("@volley/recognition-client-sdk")
+    .then((mod) => {
+        recognitionSdk = mod
+        recognitionSdkLoaded = true
+    })
+    .catch(() => {
+        console.warn("[PlayingController] Recognition Service SDK not available — using text input fallback")
+        recognitionSdkLoaded = true
+    })
 
 interface RecordingResources {
     client: any
@@ -42,8 +46,18 @@ export function PlayingController() {
     const [textInput, setTextInput] = useState("")
     const [feedback, setFeedback] = useState<string | null>(null)
     const [sdkAvailable, setSdkAvailable] = useState(recognitionSdk !== null)
+    const [sdkReady, setSdkReady] = useState(recognitionSdkLoaded)
 
     const resourcesRef = useRef<RecordingResources | null>(null)
+
+    // Wait for async SDK import to resolve
+    useEffect(() => {
+        if (sdkReady) return
+        recognitionSdkPromise.then(() => {
+            setSdkReady(true)
+            setSdkAvailable(recognitionSdk !== null)
+        })
+    }, [sdkReady])
 
     const question = (state as any)?.currentQuestion ?? ""
     const questionIndex = (state as any)?.questionIndex ?? 0
