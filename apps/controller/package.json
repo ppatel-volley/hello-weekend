@@ -1,0 +1,29 @@
+{
+    "name": "@hello-weekend/controller",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "tsc -b && vite build",
+        "test": "vitest",
+        "typecheck": "tsc --noEmit",
+        "clean": "rm -rf dist"
+    },
+    "dependencies": {
+        "@hello-weekend/shared": "workspace:*",
+        "@volley/platform-sdk": "^7.46.0",
+        "@volley/recognition-client-sdk": "latest",
+        "@volley/vgf": "^4.10.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0"
+    },
+    "devDependencies": {
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "@vitejs/plugin-react": "^4.3.0",
+        "typescript": "^5.7.0",
+        "vite": "^6.0.0",
+        "vitest": "^3.0.0"
+    }
+}
