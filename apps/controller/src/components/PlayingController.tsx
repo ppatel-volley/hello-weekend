@@ -253,7 +253,7 @@ export function PlayingController() {
             </div>
 
             {/* Question */}
-            <h2 style={{ fontSize: 22, margin: "8px 0", maxWidth: 400 }}>
+            <h2 data-question={question} style={{ fontSize: 22, margin: "8px 0", maxWidth: 400 }}>
                 {question || "Waiting for question..."}
             </h2>
 

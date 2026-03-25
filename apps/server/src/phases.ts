@@ -30,8 +30,8 @@ interface Phase {
     actions: Record<string, unknown>
     reducers: Record<string, unknown>
     thunks: Record<string, unknown>
-    onBegin?: (ctx: unknown) => Promise<HelloWeekendState | void>
-    onEnd?: (ctx: unknown) => Promise<HelloWeekendState | void>
+    onBegin?: (ctx: unknown) => Promise<void>
+    onEnd?: (ctx: unknown) => Promise<void>
     endIf: ((ctx: GameActionContext) => boolean) | undefined
     next: string | ((ctx: GameActionContext) => string)
 }
@@ -52,7 +52,9 @@ export function createPhases(): Record<string, Phase> {
             onBegin: async (ctx: unknown) => {
                 const c = ctx as PhaseLifecycleContext
                 c.reducerDispatcher("CLEAR_NEXT_PHASE", {})
-                return c.getState()
+                // Reset controllerConnected so lobby doesn't immediately cascade
+                // to playing when returning via Play Again
+                c.reducerDispatcher("SET_CONTROLLER_CONNECTED", { connected: false })
             },
             endIf: (ctx) =>
                 ctx.session.state.controllerConnected ||
@@ -71,7 +73,6 @@ export function createPhases(): Record<string, Phase> {
             onBegin: async (ctx: unknown) => {
                 const c = ctx as PhaseLifecycleContext
                 c.reducerDispatcher("CLEAR_NEXT_PHASE", {})
-                return c.getState()
             },
             endIf: (ctx) => hasNextPhase(ctx.session.state),
             next: (ctx) => {
@@ -88,7 +89,6 @@ export function createPhases(): Record<string, Phase> {
             onBegin: async (ctx: unknown) => {
                 const c = ctx as PhaseLifecycleContext
                 c.reducerDispatcher("CLEAR_NEXT_PHASE", {})
-                return c.getState()
             },
             endIf: (ctx) => hasNextPhase(ctx.session.state),
             next: (ctx) => {

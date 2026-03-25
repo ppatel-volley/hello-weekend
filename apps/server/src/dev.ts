@@ -76,6 +76,20 @@ app.get("/health", (_req, res) => {
     res.json({ status: "ok" })
 })
 
+// Dev-only: force-reset the dev session (used by E2E tests between scenarios)
+app.post("/api/reset-session", (_req, res) => {
+    if (storage.doesSessionExist(DEV_SESSION_ID)) {
+        storage.deleteSessionById(DEV_SESSION_ID)
+    }
+    storage.createSession({
+        sessionId: DEV_SESSION_ID,
+        members: {},
+        state: game.setup(),
+    })
+    logger.info({ sessionId: DEV_SESSION_ID }, "Dev session force-reset")
+    res.json({ status: "ok", sessionId: DEV_SESSION_ID })
+})
+
 server.start()
 
 // Pre-create a dev session so clients can connect with ?sessionId=dev-test
