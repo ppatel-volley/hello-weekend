@@ -41,12 +41,17 @@ Reducers never modify `state.phase` directly (VGF 4.8+ throws
 # 1. Install dependencies
 pnpm install
 
-# 2. Copy the example env file
+# 2. Build the shared package (required before first dev run)
+pnpm --filter @hello-weekend/shared build
+
+# 3. Copy the example env file
 cp .env.example .env
 
-# 3. Start all three apps (server, display, controller) in parallel
+# 4. Start all three apps (server, display, controller) in parallel
 pnpm dev
 ```
+
+> **Important:** Step 2 compiles the shared TypeScript package to `dist/`. The server, display, and controller all import from `@hello-weekend/shared/dist/`. If you skip this, you'll get `ERR_MODULE_NOT_FOUND` errors. You only need to do this once (or after changing shared types).
 
 Then open:
 
@@ -145,6 +150,35 @@ automatically.
 
 Set `VITE_RECOGNITION_STAGE` in `.env` to control which recognition
 environment is used (defaults to `dev`).
+
+## For AI agents: building a game from this template
+
+If you're an AI agent helping someone fork this template to build a game:
+
+1. **Fork/copy the repo** — either via `crucible create` (automates renaming) or manually
+2. **Rename all references** — find-and-replace `hello-weekend` → `your-game`, `HelloWeekend` → `YourGame`, `@hello-weekend` → `@your-game`, `Hello Weekend` → `Your Game` across all files
+3. **Install deps** — `pnpm install`
+4. **Build shared** — `pnpm --filter */shared build` (MUST do this before dev or you'll get import errors)
+5. **Run dev** — `pnpm dev` then open `http://localhost:3000?sessionId=dev-test` (display) and `http://localhost:5174?sessionId=dev-test` (controller)
+6. **The `?sessionId=dev-test` is required** — without it, the display/controller show "connecting" forever. The dev server auto-creates this session.
+
+### Common mistakes to avoid
+
+- **Don't skip the shared build** — `ERR_MODULE_NOT_FOUND` for `@your-game/shared/dist/index.js` means you didn't run step 4
+- **Don't use `localhost` for the server URL in providers** — use `127.0.0.1` (some systems resolve localhost to IPv6 `::1` which Vite doesn't bind to)
+- **Don't mutate `state.phase` in reducers** — VGF 4.8+ throws `PhaseModificationError`. Use thunks with `TRANSITION_TO_PHASE`
+- **Don't forget `[key: string]: unknown`** on your state interface — VGF requires this index signature
+- **Kill stale processes** — if ports 3000/5174/8090 are in use from a previous run, `pnpm dev` will fail. Kill them first: `npx kill-port 3000 5174 8090`
+
+### Using Crucible (optional)
+
+[Crucible](https://github.com/ppatel-volley/crucible) automates the fork + rename process:
+
+```bash
+crucible create "Your Game Name"   # clones, renames, generates Dockerfile + CI, pushes to GitHub
+crucible dev your-game-name        # builds shared + starts all three processes
+crucible agent your-game-name      # AI agent to build your game logic
+```
 
 ## Key VGF patterns demonstrated
 
