@@ -2335,6 +2335,23 @@ Typically caused by trusted origins mismatch. Check the browser console for reje
 3. Run `npx @volley/vwr-s3-cli get` to inspect your S3 config and `npx @volley/vwr-s3-cli edit` to fix it.
 4. Escalate to @Foundation with your device ID, platform, and shell app version.
 
+**Game loads but VWR shows timeout / destroys iframe:**
+VWR waits for a `ready` postMessage from the game iframe. If the game never sends it, VWR times out (~30-40s) and destroys the iframe. PlatformProvider normally emits `ready` during initialisation, but on Fire TV auth often fails (401), preventing the event from firing.
+
+**Fix:** Add an early, unconditional `ready` signal in your display app's `main.tsx`, BEFORE React renders:
+
+```typescript
+// main.tsx — MUST be before createRoot().render()
+if (window.parent && window.parent !== window) {
+    window.parent.postMessage(
+        { type: "ready", source: "platform-sdk-iframe", args: [] },
+        "*"
+    )
+}
+```
+
+This is safe because VWR ignores duplicate `ready` events. If PlatformProvider later sends its own `ready`, VWR simply discards it. The hello-weekend template includes this by default.
+
 > **Source:** [Notion — Dev and Test Workflows with VWR](https://www.notion.so/2e4442bc9713800e82eae17bf850ee25)
 
 ---
