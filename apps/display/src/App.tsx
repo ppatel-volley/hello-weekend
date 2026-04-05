@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { PlatformProvider } from "@volley/platform-sdk/react"
 import { SceneRouter } from "./components/SceneRouter"
 import { VGFDisplayProvider } from "./providers/VGFDisplayProvider"
 import { detectPlatform, isTV } from "./utils/detectPlatform"
@@ -15,10 +16,6 @@ ensureLocalHubSessionId(stage)
  */
 function MaybePlatformProvider({ children }: { children: ReactNode }) {
     if (!isTV(detectPlatform())) return <>{children}</>
-
-    // Synchronous conditional load — avoids bundling the SDK in web builds.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { PlatformProvider } = require("@volley/platform-sdk/react")
 
     return (
         <PlatformProvider

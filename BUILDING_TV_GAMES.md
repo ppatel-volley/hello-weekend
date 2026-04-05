@@ -2551,7 +2551,7 @@ A consolidated list of every gotcha documented in the learnings system.
 | 13 | **Stage "local" needs `platformApiUrl`** | Requires `platformApiUrl` for local development. `platformAuthApiUrl` does not exist in the Zod schema -- only `platformApiUrl` is validated. |
 | 14 | **Deepgram auto-detect doesn't work** | Always specify `encoding=linear16&sample_rate=...` in the WebSocket URL. |
 | 15 | **onBegin must return game state** | VGF's `PhaseRunner` does `newState = await phase.onBegin(ctx)`. Return type is `GameState | Promise<GameState>`. The emoji codebase returns void via type casting (`ctx: unknown`), which works but doesn't match the official type. |
-| 16 | **`require()` in MaybePlatformProvider** | Do NOT refactor the `require("@volley/platform-sdk/react")` to `import()`. The synchronous conditional load is intentional and Vite handles it correctly. |
+| 16 | **Static import for PlatformProvider** | Use a static `import { PlatformProvider } from "@volley/platform-sdk/react"` — do NOT use `require()`. Dynamic `require()` breaks in production ESM bundles on Fire TV (Chromium 68). Vite tree-shakes unused imports anyway. |
 | 17 | **NPM auth required for @volley packages** | If `pnpm add @volley/vgf` fails with 404/403, run `npm login` first. Packages are on the public npm registry under the Volley org scope. |
 | 18 | **Deepgram API key not set** | If voice input doesn't work in dev, check `.env` for `DEEPGRAM_API_KEY` and check server logs for the Deepgram proxy startup message. |
 

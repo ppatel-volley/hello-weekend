@@ -8,6 +8,7 @@
  * volley_hub_session_id param before PlatformProvider renders.
  */
 import type { ReactNode } from "react"
+import { PlatformProvider } from "@volley/platform-sdk/react"
 import { ensureLocalHubSessionId, GAME_CONSTANTS } from "@hello-weekend/shared"
 import { getSessionIdFromUrl } from "./utils/params"
 import { VGFControllerProvider } from "./providers/VGFControllerProvider"
@@ -19,26 +20,17 @@ const STAGE = import.meta.env.VITE_PLATFORM_SDK_STAGE ?? "dev"
 ensureLocalHubSessionId(STAGE)
 
 function MaybePlatformProvider({ children }: { children: ReactNode }) {
-    // In dev without VPN, PlatformProvider may crash due to auth server
-    // being unreachable. Wrap in try/catch with conditional require.
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { PlatformProvider } = require("@volley/platform-sdk/react")
-        return (
-            <PlatformProvider
-                options={{
-                    gameId: GAME_CONSTANTS.GAME_ID,
-                    appVersion: "0.1.0",
-                    stage: STAGE,
-                }}
-            >
-                {children}
-            </PlatformProvider>
-        )
-    } catch (err) {
-        console.warn("[HelloWeekend] PlatformProvider failed to load, running without it:", err)
-        return <>{children}</>
-    }
+    return (
+        <PlatformProvider
+            options={{
+                gameId: GAME_CONSTANTS.GAME_ID,
+                appVersion: "0.1.0",
+                stage: STAGE,
+            }}
+        >
+            {children}
+        </PlatformProvider>
+    )
 }
 
 export function App() {

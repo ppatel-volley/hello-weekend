@@ -12,6 +12,7 @@
  * - autoConnect in clientOptions (gotcha #39)
  */
 import { useMemo, useRef, type ReactNode } from "react"
+import { useDeviceInfo } from "@volley/platform-sdk/react"
 import { VGFProvider, SocketIOClientTransport, ClientType } from "@volley/vgf/client"
 import { getVolleyAccount } from "../utils/params"
 
@@ -25,15 +26,13 @@ export function VGFControllerProvider({ children, sessionId, serverUrl }: VGFCon
     const volleyAccount = getVolleyAccount()
     const fallbackIdRef = useRef(crypto.randomUUID())
 
-    // Try to get device ID from Platform SDK; fall back to random UUID
+    // Get device ID from Platform SDK; fall back to random UUID
     let deviceId: string | null = null
     try {
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const { useDeviceInfo } = require("@volley/platform-sdk/react")
         const deviceInfo = useDeviceInfo()
         deviceId = deviceInfo.getDeviceId()
     } catch {
-        // Platform SDK not available (dev without VPN, etc.)
+        // Platform SDK not available (PlatformProvider not in tree, etc.)
     }
 
     const userId = volleyAccount || deviceId || fallbackIdRef.current
